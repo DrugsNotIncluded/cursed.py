@@ -11,7 +11,7 @@ from functools import wraps
 from dataclass_wizard import fromdict, asdict
 import colorama
 
-from tools.types import *
+from .tools.types import *
 
 DEBUG = False
 REQUEST = True
