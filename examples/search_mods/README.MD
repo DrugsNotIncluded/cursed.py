@@ -15,7 +15,7 @@ from colorama.Style import RESET_ALL
 
 # Cursed.py
 from cursedpy.cursed import CFClient
-from cursedpy.types import *
+from cursedpy.tools.types import *
 
 API_KEY = "YOURS_CURSEFORGE_API_KEY"
 """
