@@ -8,8 +8,8 @@ About:
 Full **Curseforge API** wrapper<br> 
 👉 https://docs.curseforge.com<br>
 ```
-All Json Shemas (Python Types) are exactly the same as in docs
-Except missing "Return types" which are essentially just this: {"data": Any} or this {"data": Any, "pagination":Pagination}
+All Json Schemas (Python Types) are exactly the same as in docs
+Except missing "Return types" which are essentially just this: {"data": Any} or this {"data": Any, "pagination": Pagination}
 ```
 
 Usage examples:
