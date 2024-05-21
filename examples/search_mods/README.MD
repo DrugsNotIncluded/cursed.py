@@ -14,8 +14,8 @@ from colorama.Fore import GREEN. BLUE, MAGENTA
 from colorama.Style import RESET_ALL
 
 # Cursed.py
-from cursed_py import CFClient
-from cursed_py.types import *
+from cursedpy import CFClient
+from cursedpy.types import *
 
 API_KEY = "YOURS_CURSEFORGE_API_KEY"
 """
