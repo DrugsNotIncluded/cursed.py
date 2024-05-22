@@ -20,7 +20,6 @@ Usage examples:
 - [~~Get curseforge supported games list~~](./examples/games_list/README.md) **TODO**
 - [~~Get mods download links~~](./examples/mods_download_links/README.md) **TODO**
 
-
 Implemented API:
 ---
 - [x] Games
@@ -29,6 +28,10 @@ Implemented API:
 - [x] Files
 - [x] Fingerprints
 - [x] Minecraft
+
+TODO:
+- [ ] Partially rewrite with `requests.Session()`
+- [ ] Add native async support
 
 QOL:
 ---
