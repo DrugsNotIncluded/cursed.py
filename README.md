@@ -3,6 +3,8 @@
     <img width="64px" alt="icon" src="./curseforge.png">
 </div>
 
+[![PyPI version](https://badge.fury.io/py/cursedpy.svg)](https://badge.fury.io/py/cursedpy)
+
 About:
 ---
 Full **Curseforge API** wrapper<br> 
