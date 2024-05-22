@@ -27,7 +27,7 @@ Implemented API:
 - [x] Categories
 - [x] Mods
 - [x] Files
-- [ ] Fingerprints
+- [x] Fingerprints
 - [x] Minecraft
 
 QOL:

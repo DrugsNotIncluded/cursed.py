@@ -34,7 +34,7 @@ class endpoint:
 
 endpoints = {
     #Games
-    "games":endpoint(GET, '/v1/games', 'Get all games that are available to the provided API key.'),
+    "games":endpoint(GET, '/v1/games?', 'Get all games that are available to the provided API key.'),
     "game":endpoint(GET, '/v1/games/{gameId}', 'Get a single game. A private game is only accessible by its respective API key.'),
     "versions":endpoint(GET, '/v2/games/{gameId}/versions', 'Get all available versions for each known version type of the specified game. A private game is only accessible to its respective API key.'),
     "version_types":endpoint(GET,'/v1/games/{gameId}/version-types','Get all available version types of the specified game.'),
@@ -56,8 +56,12 @@ endpoints = {
     "get_minecraft_versions":endpoint(GET,'/v1/minecraft/version',''),
     "get_specific_minecraft_version":endpoint(GET,'/v1/minecraft/version/{gameVersionString}',''),
     "get_minecraft_modloaders":endpoint(GET,'/v1/minecraft/modloader',''),
-    "get_specific_minecraft_modloader":endpoint(GET,'/v1/minecraft/modloader/{modLoaderName}','')
-    #Fingerprints ???
+    "get_specific_minecraft_modloader":endpoint(GET,'/v1/minecraft/modloader/{modLoaderName}',''),
+    #Fingerprints
+    "get_fingerprints_matches_by_game_id":endpoint(POST,'v1/fingerprints/{gameId}','Get mod files that match a list of fingerprints for a given game id.'),
+    "get_fingerprints_matches":endpoint(POST, '/v1/fingerprints', 'Get mod files that match a list of fingerprints.'),
+    "get_fingerprints_fuzzy_matches_by_game_id":endpoint(POST, '/v1/fingerprints/fuzzy/{gameId}', 'Get mod files that match a list of fingerprints using fuzzy matching.'),
+    "get_fingerprints_fuzzy_matches":endpoint(POST, '/v1/fingerprints/fuzzy', 'Get mod files that match a list of fingerprints using fuzzy matching.')
 }
 
 @dataclass

@@ -17,8 +17,8 @@ DEBUG = False
 REQUEST = True
 
 #Test API token used by official curseforge apps
-import base64
-CFApiKey = base64.b64decode("JDJhJDEwJGJMNGJJTDVwVVdxZmNPN0tRdG5NUmVha3d0ZkhiTktoNnYxdVRwS2x6aHdvdWVFSlFuUG5t").decode('utf-8')
+#import base64
+#CFApiKey = base64.b64decode("JDJhJDEwJGJMNGJJTDVwVVdxZmNPN0tRdG5NUmVha3d0ZkhiTktoNnYxdVRwS2x6aHdvdWVFSlFuUG5t").decode('utf-8')
 
 class CFAPI:
     """
@@ -26,17 +26,20 @@ class CFAPI:
     """
     def __init__(self, api_key):
         self.api_key = api_key
+
     def cf_get(self, endpoint_url: str):
         if DEBUG: print(f'GET: {base_url+endpoint_url}')
         return requests.get(url=base_url+endpoint_url, headers={
             'Accept': 'application/json',
             'x-api-key': self.api_key})
+
     def cf_post(self, endpoint_url, data):
         if DEBUG: print(f'POST: {base_url+endpoint_url}\nDATA: {data}')
         return requests.post(url=base_url+endpoint_url, headers={
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'x-api-key': self.api_key}, data=data)
+
     def cf_api(self, endpoint: endpoint, data: Optional[object] = None, params: Optional[dict] = None, query: Optional[dict] = None):
         """
         Call to curseforge API
@@ -70,15 +73,18 @@ class CFAPI:
                 return(self.cf_post(endpoint_url, data))
 
 class CFGames(CFAPI):
-    #!! Add apgination parameters
-    def games(self) -> tuple[list[Game], Pagination]:
+    def games(self, index: Optional[int] = None, pageSize: Optional[int] = None) -> tuple[list[Game], Pagination]:
         """
         Get all games that are available to the provided API key.
         """
-        response = json.loads(self.cf_api(endpoints["games"]).text)
+        query = {}
+        if pageSize: query['pageSize'] = pageSize
+        if index: query['index'] = index
+        response = json.loads(self.cf_api(endpoints["games"], query=query).text)
         pagination = Pagination(**response['pagination'])
         data = [fromdict(Game, game) for game in response['data']]
         return(data, pagination)
+
     def game(self, gameId) -> Game:
         """
         Get a single game.
@@ -88,7 +94,8 @@ class CFGames(CFAPI):
         print(response)
         data = fromdict(Game, response['data'])
         return(data)
-    def versions(self, gameId) -> list[GameVersionsByType]:
+
+    def versions(self, gameId: int) -> list[GameVersionsByType]:
         """
         Get all available versions for each known version type of the specified game.
         A private game is only accessible to its respective API key.
@@ -96,7 +103,8 @@ class CFGames(CFAPI):
         response = json.loads(self.cf_api(endpoints["versions"], params={"gameId":gameId}).text)
         data = [fromdict(GameVersionsByType, vbt) for vbt in response['data']]
         return(data)
-    def version_types(self, gameId) -> list[GameVersionType]:
+
+    def version_types(self, gameId: int) -> list[GameVersionType]:
         """
         Get all available version types of the specified game.
         A private game is only accessible to its respective API key.
@@ -291,10 +299,37 @@ class CFMinecraft(CFAPI):
         return(data)
 
 class CFFingerprints(CFAPI):
-    """
-    NOT IMPLEMENTED
-    """
-    pass
+    def get_fingerprints_matches_by_game_id(self, gameId: int, fingerprints: list[int]) -> FingerprintsMatchesResult:
+        """
+        Get mod files that match a list of fingerprints for a given game id.
+        """
+        response = json.loads(self.cf_api(endpoint['get_fingerprints_matches_by_game_id'],data={"fingerprints":fingerprints},params={"gameId":gameId}))
+        data = fromdict(FingerprintsMatchesResult, response['data'])
+        return(data)
+    
+    def get_fingerprints_matches(self, fingerprint: list[int]) -> FingerprintsMatchesResult:
+        """
+        Get mod files that match a list of fingerprints.
+        """
+        response = json.loads(self.cf_api(endpoint['get_fingerprints_matches'],data={"fingerprints":fingerprints}))
+        data = fromdict(FingerprintsMatchesResult, response['data'])
+        return(data)
+
+    def get_fingerprints_fuzzy_matches_by_game_id(self, gameId: int, fingerprints: list[FolderFingerprint]) -> FingerprintFuzzyMatchResult:
+        """
+        Get mod files that match a list of fingerprints using fuzzy matching.
+        """
+        response = json.loads(self.cf_api(endpoint['get_fingerprints_fuzzy_matches_by_game_id'], data={"gameId": gameId, "fingerprints":fingerprints}, params={"gameId": gameId}))
+        data = fromdict(FingerprintFuzzyMatchResult, response['data'])
+        return(data)
+
+    def get_fingerprints_fuzzy_matches(self, fingerprints: list[FolderFingerprint]) -> FingerprintFuzzyMatchResult:
+        """
+        Get mod files that match a list of fingerprints using fuzzy matching.
+        """
+        response = json.loads(self.cf_api(endpoint['get_fingerprints_fuzzy_matches'], data={"gameId": gameId, "fingerprints":fingerprints}))
+        data = fromdict(FingerprintFuzzyMatchResult, response['data'])
+        return(data)
 
 class CFClient:
     def __init__(self, api_key):
