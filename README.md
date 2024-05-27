@@ -20,9 +20,9 @@ Except missing "Return types" which are essentially just this:
 
 Usage examples:
 ---
-- [Search mods](./examples/search_mods/README.MD)
-- [~~Get curseforge supported games list~~](./examples/games_list/README.md) **TODO**
-- [~~Get mods download links~~](./examples/mods_download_links/README.md) **TODO**
+- [Search mods](https://github.com/DrugsNotIncluded/cursed.py/blob/main/examples/search_mods/README.MD)
+- [~~Get curseforge supported games list~~](https://github.com/DrugsNotIncluded/cursed.py/blob/main/examples/games_list/README.md) **TODO**
+- [~~Get mods download links~~](https://github.com/DrugsNotIncluded/cursed.py/blob/main/examples/mods_download_links/README.md) **TODO**
 
 Basic usage:
 ---
