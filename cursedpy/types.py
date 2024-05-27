@@ -1,73 +1,95 @@
 import argparse
-import requests
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 import json
-from typing import Any, Optional, List
-from urllib.parse import urlencode
-from functools import wraps
+from typing import Any, Optional
 import datetime
 import json
-from types import SimpleNamespace
-
-base_url = "https://api.curseforge.com"
-
-def JsonToType(data):
-    """
-    Transform API response to python type
-    """
-    return(json.loads(data, object_hook=lambda d: SimpleNamespace(**d)))
 
 class req_method(Enum):
     GET = 0
     POST = 1
+    DOWNLOAD = 2
 
 GET = req_method.GET
 POST = req_method.POST
+DOWNLOAD = req_method.DOWNLOAD
 
 @dataclass
 class endpoint:
     method: req_method
     endpoint: Path
-    description: Optional[str] = None
 
 endpoints = {
-    #Games
-    "games":endpoint(GET, '/v1/games?', 'Get all games that are available to the provided API key.'),
-    "game":endpoint(GET, '/v1/games/{gameId}', 'Get a single game. A private game is only accessible by its respective API key.'),
-    "versions":endpoint(GET, '/v2/games/{gameId}/versions', 'Get all available versions for each known version type of the specified game. A private game is only accessible to its respective API key.'),
-    "version_types":endpoint(GET,'/v1/games/{gameId}/version-types','Get all available version types of the specified game.'),
-    #Categories
-    "categories":endpoint(GET, '/v1/categories?', "Get all available classes and categories of the specified game. Specify a game id for a list of all game categories, or a class id for a list of categories under that class. specifiy the classes Only flag to just get the classes for a given game."),
-    #Mods
-    "search_mods":endpoint(GET, '/v1/mods/search?','Get all mods that match the search criteria.'),
-    "get_mod":endpoint(GET, '/v1/mods/{modId}', 'Get a single mod.'),
-    "get_mods":endpoint(POST, '/v1/mods', 'Get a list of mods belonging the the same game.'),
-    "get_featured_mods":endpoint(POST, '/v1/mods/featured', 'Get a list of featured, popular and recently updated mods.'),
-    "get_mod_description":endpoint(GET, '/v1/mods/{modId}/description', 'Get the full description of a mod in HTML format.'),
-    #Files
-    "get_mod_file":endpoint(GET,'/v1/mods/{modId}/files/{fileId}','Get a single file of the specified mod.'),
-    "get_mod_files":endpoint(GET,'/v1/mods/{modId}/files','Get all files of the specified mod.'),
-    "get_files":endpoint(POST, '/v1/mods/files', 'Get a list of files.'),
-    "get_mod_file_changelog":endpoint(GET, '/v1/mods/{modId}/files/{fileId}/changelog', 'Get the changelog of a file in HTML format.'),
-    "get_mod_file_download_url":endpoint(GET, '/v1/mods/{modId}/files/{fileId}/download-url', 'Get a download url for a specific file.'),
-    #Minecraft
-    "get_minecraft_versions":endpoint(GET,'/v1/minecraft/version',''),
-    "get_specific_minecraft_version":endpoint(GET,'/v1/minecraft/version/{gameVersionString}',''),
-    "get_minecraft_modloaders":endpoint(GET,'/v1/minecraft/modloader',''),
-    "get_specific_minecraft_modloader":endpoint(GET,'/v1/minecraft/modloader/{modLoaderName}',''),
-    #Fingerprints
-    "get_fingerprints_matches_by_game_id":endpoint(POST,'v1/fingerprints/{gameId}','Get mod files that match a list of fingerprints for a given game id.'),
-    "get_fingerprints_matches":endpoint(POST, '/v1/fingerprints', 'Get mod files that match a list of fingerprints.'),
-    "get_fingerprints_fuzzy_matches_by_game_id":endpoint(POST, '/v1/fingerprints/fuzzy/{gameId}', 'Get mod files that match a list of fingerprints using fuzzy matching.'),
-    "get_fingerprints_fuzzy_matches":endpoint(POST, '/v1/fingerprints/fuzzy', 'Get mod files that match a list of fingerprints using fuzzy matching.')
-}
+        # Games
+    # Get all games that are available to the provided API key.
+    "games":endpoint(GET, '/v1/games?'),
 
-@dataclass
-class ApiResponseOf:
-    data: Any
-GetResponse = ApiResponseOf # Alias
+    # Get a single game. A private game is only accessible by its respective API key.
+    "game":endpoint(GET, '/v1/games/{gameId}'),
+
+    # Get all available versions for each known version type of the specified game. A private game is only accessible to its respective API key.
+    "versions":endpoint(GET, '/v2/games/{gameId}/versions'),
+
+    # Get all available version types of the specified game.
+    "version_types":endpoint(GET,'/v1/games/{gameId}/version-types'),
+
+        # Categories
+    # Get all available classes and categories of the specified game. Specify a game id for a list of all game categories, or a class id for a list of categories under that class. specifiy the classes Only flag to just get the classes for a given game.
+    "categories":endpoint(GET, '/v1/categories?'),
+
+        # Mods
+    # Get all mods that match the search criteria.
+    "search_mods":endpoint(GET, '/v1/mods/search?'),
+
+    # Get a single mod.
+    "get_mod":endpoint(GET, '/v1/mods/{modId}'),
+
+    # Get a list of mods belonging the the same game.
+    "get_mods":endpoint(POST, '/v1/mods'),
+
+    # Get a list of featured, popular and recently updated mods.
+    "get_featured_mods":endpoint(POST, '/v1/mods/featured'),
+
+    # Get the full description of a mod in HTML format.
+    "get_mod_description":endpoint(GET, '/v1/mods/{modId}/description'),
+
+        # Files
+    # Get a single file of the specified mod.
+    "get_mod_file":endpoint(GET,'/v1/mods/{modId}/files/{fileId}'),
+
+    # Get all files of the specified mod.
+    "get_mod_files":endpoint(GET,'/v1/mods/{modId}/files'),
+
+    # Get a list of files.
+    "get_files":endpoint(POST, '/v1/mods/files'),
+
+    # Get the changelog of a file in HTML format.
+    "get_mod_file_changelog":endpoint(GET, '/v1/mods/{modId}/files/{fileId}/changelog'),
+
+    # Get a download url for a specific file.
+    "get_mod_file_download_url":endpoint(GET, '/v1/mods/{modId}/files/{fileId}/download-url'),
+
+        # Minecraft
+    "get_minecraft_versions":endpoint(GET,'/v1/minecraft/version'),
+    "get_specific_minecraft_version":endpoint(GET,'/v1/minecraft/version/{gameVersionString}'),
+    "get_minecraft_modloaders":endpoint(GET,'/v1/minecraft/modloader'),
+    "get_specific_minecraft_modloader":endpoint(GET,'/v1/minecraft/modloader/{modLoaderName}'),
+
+        # Fingerprints
+    # Get mod files that match a list of fingerprints for a given game id.
+    "get_fingerprints_matches_by_game_id":endpoint(POST,'v1/fingerprints/{gameId}'),
+
+    # Get mod files that match a list of fingerprints.
+    "get_fingerprints_matches":endpoint(POST, '/v1/fingerprints'),
+
+    # Get mod files that match a list of fingerprints using fuzzy matching.
+    "get_fingerprints_fuzzy_matches_by_game_id":endpoint(POST, '/v1/fingerprints/fuzzy/{gameId}'),
+
+    # Get mod files that match a list of fingerprints using fuzzy matching.
+    "get_fingerprints_fuzzy_matches":endpoint(POST, '/v1/fingerprints/fuzzy')
+}
 
 @dataclass
 class Pagination:
@@ -75,11 +97,6 @@ class Pagination:
     pageSize: int
     resultCount: int
     totalCount: int
-
-@dataclass
-class GetResponseWithPagination:
-    data: Any
-    pagination: Pagination
 
 class ModsSearchSortField(Enum):
     Featured = 1

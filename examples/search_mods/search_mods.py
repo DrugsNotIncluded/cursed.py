@@ -1,18 +1,7 @@
-Example:
----
-```py
-"""
-Example of searching mods
-
-Modloader: NeoForge
-Minecraft version: 1.20.1
-Category: Minecraft addons ('mc-addons')
-Free search query: "Create"
-"""
 import asyncio
 
 # For output coloring
-from colorama.Fore import GREEN. BLUE, MAGENTA
+from colorama.Fore import GREEN, BLUE, MAGENTA
 from colorama.Style import RESET_ALL
 
 # Cursed.py
@@ -58,7 +47,3 @@ async def main():
                 )
                 break
 asyncio.run(main())
-```
-Results:
----
-![alt text](image.png)
