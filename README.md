@@ -13,8 +13,8 @@ Full asynchronous **Curseforge API** wrapper<br>
 All Json Schemas (Python Types) are exactly the same as in docs
 Except missing "Return types" which are essentially just this:
 ```
-```json
- {"data": Any} 
+```python
+ {"data": Any}
  {"data": Any, "pagination": Pagination}
 ```
 
